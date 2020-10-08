@@ -10,8 +10,9 @@ $(document).ready(function () {
 
         var nuLi = $("<li class='list-group-item'>");
         nuLi.text(city);
-        nuLi.on('click', function () {
-            populateWeatherdata(nuLi.val);
+        nuLi.on('click', function (event) {
+            var city = $(this).text();
+            populateWeatherdata(city);
         })
         $("#cityList").append(nuLi);
     })
@@ -28,13 +29,13 @@ $(document).ready(function () {
                 APPID: "dc8154684c519c00cf1c67748fcc8af5"
             },
             method: 'GET'
-        }).then(function (result) {
-            $("#displaytemp").text(result.main.temp);
-            $("#displayhumidity").text(result.main.humidity);
-            $("#displaywindspeed").text(result.wind.speed);
-            getUVIndex(result.coord.lat, result.coord.lon);
-            $("#currentcity").text(result.name);
-            $('#currentdate').text(moment.unix(result.dt).format('dddd MMM Do h:mm a'));
+        }).then(function (response) {
+            $("#displaytemp").text(response.main.temp);
+            $("#displayhumidity").text(response.main.humidity);
+            $("#displaywindspeed").text(response.wind.speed);
+            getUVIndex(response.coord.lat, response.coord.lon);
+            $("#currentcity").text(response.name);
+            $('#currentdate').text(moment.unix(response.dt).format('dddd MMM Do h:mm a'));
 
         });
 
@@ -47,18 +48,22 @@ $(document).ready(function () {
 
             },
             method: 'GET'
-        }).then(function (result) {
+        }).then(function (response) {
+            console.log(response)
             $('#displayforecast').empty();
-            for (var i = 0; i < result.list.length; i += 8) {
+            for (var i = 0; i < response.list.length; i += 8) {
                 var cardEl = $("<div class='card col-sm'>");
                 var containerEl = $("<div class='container'>");
                 var dateEl = $('<h5>');
-                dateEl.text(moment.unix(result.list[i].dt).format('dddd MMM Do'))
+                dateEl.text(moment.unix(response.list[i].dt).format('dddd MMM Do'));
+                var uvDate = response.list[i].dt;
+                var uvEL = $("<p id='uvEl'>");
+                getUVIForecast(response.city.coord.lat, response.city.coord.lon);
                 var temperatureEl = $("<p>");
                 var humidityEl = $("<p>");
-                temperatureEl.text("Temperature " + result.list[i].main.temp);
-                humidityEl.text("Humidity " + result.list[i].main.humidity);
-                containerEl.append([dateEl, humidityEl, temperatureEl]);
+                temperatureEl.text("Temperature " + response.list[i].main.temp);
+                humidityEl.text("Humidity " + response.list[i].main.humidity);
+                containerEl.append([dateEl, humidityEl, temperatureEl, uvEl]);
                 cardEl.append(containerEl);
                 $('#displayforecast').append(cardEl);
             }
@@ -79,9 +84,28 @@ $(document).ready(function () {
         }).then(function (response) {
             $("#displayuvindex").text(response.value);
         });
+    }
 
+    function getUVIForecast(lat,lon) {
+        uvfUrl = "http://api.openweathermap.org/data/2.5/uvi/forecast"
 
-
+        $.ajax({
+            url: uvfUrl,
+            data: {
+                lat: lat,
+                lon: lon,
+                APPID: "dc8154684c519c00cf1c67748fcc8af5"
+            },
+            method: 'GET'
+        }).then(function (response) {
+            console.log(response);
+            for (let i = 0; i < response.length; i++) {
+                const timeSelect = response[i].date;
+                if (timeSelect === uvDate) {
+                    $("#uvEl").text(response[i].value);
+                }
+            }
+        });
     }
 
 });
