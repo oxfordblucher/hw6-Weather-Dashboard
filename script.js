@@ -49,21 +49,17 @@ $(document).ready(function () {
             },
             method: 'GET'
         }).then(function (response) {
-            console.log(response)
             $('#displayforecast').empty();
             for (var i = 0; i < response.list.length; i += 8) {
                 var cardEl = $("<div class='card col-sm'>");
                 var containerEl = $("<div class='container'>");
                 var dateEl = $('<h5>');
                 dateEl.text(moment.unix(response.list[i].dt).format('dddd MMM Do'));
-                var uvDate = response.list[i].dt;
-                var uvEL = $("<p id='uvEl'>");
-                getUVIForecast(response.city.coord.lat, response.city.coord.lon);
                 var temperatureEl = $("<p>");
                 var humidityEl = $("<p>");
                 temperatureEl.text("Temperature " + response.list[i].main.temp);
                 humidityEl.text("Humidity " + response.list[i].main.humidity);
-                containerEl.append([dateEl, humidityEl, temperatureEl, uvEl]);
+                containerEl.append([dateEl, humidityEl, temperatureEl]);
                 cardEl.append(containerEl);
                 $('#displayforecast').append(cardEl);
             }
@@ -86,26 +82,13 @@ $(document).ready(function () {
         });
     }
 
-    function getUVIForecast(lat,lon) {
-        uvfUrl = "http://api.openweathermap.org/data/2.5/uvi/forecast"
+    initPage();
 
-        $.ajax({
-            url: uvfUrl,
-            data: {
-                lat: lat,
-                lon: lon,
-                APPID: "dc8154684c519c00cf1c67748fcc8af5"
-            },
-            method: 'GET'
-        }).then(function (response) {
-            console.log(response);
-            for (let i = 0; i < response.length; i++) {
-                const timeSelect = response[i].date;
-                if (timeSelect === uvDate) {
-                    $("#uvEl").text(response[i].value);
-                }
-            }
-        });
+    function initPage() {
+        if (localStorage.getItem("city") !== null) {
+            var city = localStorage.getItem("city");
+
+            populateWeatherdata(city);
+        }
     }
-
 });
