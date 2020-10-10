@@ -3,19 +3,30 @@ $(document).ready(function () {
     var userInput = $('#search');
     var searchButton = $('button');
 
+    qdCities = [];
+
     searchButton.on('click', function () {
         var city = userInput.val();
         window.localStorage.setItem("city", city);
+        qdCities.push(city);
         populateWeatherdata(city);
-
-        var nuLi = $("<li class='list-group-item'>");
-        nuLi.text(city);
-        nuLi.on('click', function (event) {
-            var city = $(this).text();
-            populateWeatherdata(city);
-        })
-        $("#cityList").append(nuLi);
+        renderSearch();
+        window.localStorage.setItem("searches", JSON.stringify(qdCities));
     })
+
+    function renderSearch() {
+        $("#cityList").html("");
+        for (let i = 0; i < qdCities.length; i++) {
+            const qdCity = qdCities[i];
+            var nuLi = $("<li class='list-group-item'>");
+            nuLi.text(qdCity);
+            nuLi.attr("id", qdCity);
+            nuLi.on('click', function (event) {
+                var city = $(this).text();
+                populateWeatherdata(city);
+            })
+            $("#cityList").append(nuLi);
+    }}
 
     function populateWeatherdata(city) {
         var queryUrl = "https://api.openweathermap.org/data/2.5/weather";
@@ -87,8 +98,12 @@ $(document).ready(function () {
     function initPage() {
         if (localStorage.getItem("city") !== null) {
             var city = localStorage.getItem("city");
-
             populateWeatherdata(city);
+            var retrievedSrch = localStorage.getItem("searches");
+            qdCities = JSON.parse(retrievedSrch);
+            console.log(qdCities);
         }
+        renderSearch();
     }
-});
+    }
+);
