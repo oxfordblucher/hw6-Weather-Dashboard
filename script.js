@@ -96,7 +96,20 @@ $(document).ready(function () {
             },
             method: 'GET'
         }).then(function (response) {
-            $("#displayuvindex").text(response.value);
+            var uvDisplay = $("#displayuvindex")
+            uvDisplay.text(response.value);
+            if (response.value > 8) {
+                uvDisplay.attr("style","background-color: purple");
+            }
+            if (response.value <= 8) {
+                uvDisplay.attr("style","background-color: red");
+            } 
+            if (response.value <= 5) {
+                uvDisplay.attr("style","background-color: yellow");
+            } 
+            if (response.value <= 2) {
+                uvDisplay.attr("style","background-color: green");
+            } 
         });
     }
 
