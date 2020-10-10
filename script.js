@@ -47,7 +47,10 @@ $(document).ready(function () {
             getUVIndex(response.coord.lat, response.coord.lon);
             $("#currentcity").text(response.name);
             $('#currentdate').text(moment.unix(response.dt).format('dddd MMM Do h:mm a'));
-
+            var icon = response.weather[0].icon;
+            var weatherImg = $("<img>");
+            weatherImg.attr("src", "http://openweathermap.org/img/wn/" + icon + "@2x.png")
+            $("#currentcity").append(weatherImg);
         });
 
         $.ajax({
@@ -73,6 +76,10 @@ $(document).ready(function () {
                 containerEl.append([dateEl, humidityEl, temperatureEl]);
                 cardEl.append(containerEl);
                 $('#displayforecast').append(cardEl);
+                var weatherImg = $("<img>");
+                var icon = response.list[i].weather[0].icon;
+                weatherImg.attr("src", "http://openweathermap.org/img/wn/" + icon + "@2x.png");
+                dateEl.append(weatherImg);
             }
         });
 
