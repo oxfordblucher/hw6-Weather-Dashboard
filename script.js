@@ -49,7 +49,7 @@ $(document).ready(function () {
             $('#currentdate').text(moment.unix(response.dt).format('dddd MMM Do h:mm a'));
             var icon = response.weather[0].icon;
             var weatherImg = $("<img>");
-            weatherImg.attr("src", "http://openweathermap.org/img/wn/" + icon + "@2x.png")
+            weatherImg.attr("src", "https://openweathermap.org/img/wn/" + icon + "@2x.png")
             $("#currentcity").append(weatherImg);
         });
 
@@ -78,14 +78,14 @@ $(document).ready(function () {
                 $('#displayforecast').append(cardEl);
                 var weatherImg = $("<img>");
                 var icon = response.list[i].weather[0].icon;
-                weatherImg.attr("src", "http://openweathermap.org/img/wn/" + icon + "@2x.png");
+                weatherImg.attr("src", "https://openweathermap.org/img/wn/" + icon + "@2x.png");
                 dateEl.append(weatherImg);
             }
         });
 
     }
     function getUVIndex(lat,lon) {
-        uviUrl = "http://api.openweathermap.org/data/2.5/uvi"
+        uviUrl = "https://api.openweathermap.org/data/2.5/uvi"
 
         $.ajax({
             url: uviUrl,
